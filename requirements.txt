@@ -1,0 +1,18 @@
+# Core dependencies
+webdataset>=0.2.0
+transformers>=4.51.0
+torch>=2.4.0
+tqdm>=4.64.0
+numpy>=1.21.0
+click>=8.0.0
+rich>=12.0.0
+megatron-core>=0.10.0
+megatron-energon
+
+# Development dependencies
+pytest>=7.0.0
+pytest-cov>=4.0.0
+black>=22.0.0
+isort>=5.10.0
+flake8>=5.0.0
+mypy>=0.991 
