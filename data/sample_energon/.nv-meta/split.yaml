@@ -1,0 +1,4 @@
+split_parts:
+  train:
+  - shard_000000.tar
+exclude: []

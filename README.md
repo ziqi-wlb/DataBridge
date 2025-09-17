@@ -46,6 +46,19 @@ DataBridge provides a unified command-line interface for all format conversions:
 # List all supported formats
 databridge list-formats
 
+# Supported Formats:
+#   • jsonl
+#   • webdataset
+#   • binidx
+#   • energon
+
+# File Extensions:
+#   • .jsonl → jsonl
+#   • .json → jsonl
+#   • .tar → energon
+#   • .bin → binidx
+#   • .idx → binidx
+
 # Convert between any supported formats
 databridge convert \
     --input-path /path/to/input \
@@ -84,6 +97,9 @@ databridge convert \
     --input-format jsonl \
     --output-format webdataset \
     --shard-size 1000
+
+# Example:
+databridge convert -i data/sample.jsonl -o data/sample_webdataset --output-format webdataset
 ```
 
 **3. Convert bin/idx to JSONL:**
@@ -93,11 +109,12 @@ databridge convert \
     --output-path data.jsonl \
     --input-format binidx \
     --output-format jsonl
+
 ```
 
 ### Python API
 
-#### Using the Registry (Recommended)
+#### Using the Registry
 
 ```python
 from databridge.formats.registry import registry

@@ -133,9 +133,7 @@ class WebDatasetFormatHandler(BaseFormatHandler):
                     "__key__": f"doc_{int(doc_id):08d}",
                     "text": text.encode('utf-8')
                 }
-                
-                # No tokens field in original format
-                
+
                 sink.write(sample)
         
         # Create dataset info file

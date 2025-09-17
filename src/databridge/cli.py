@@ -124,7 +124,7 @@ def info():
     for format_name in formats:
         console.print(f"  • {format_name}")
     
-    console.print(f"\nFor more information, visit: https://github.com/yourusername/DataBridge")
+    console.print(f"\nFor more information, visit: https://github.com/ziqi-wlb/DataBridge")
 
 
 @main.command()
