@@ -121,7 +121,6 @@ class EnergonFormatHandler(BaseFormatHandler):
     def _convert_webdataset_to_energon(self, webdataset_path: str, energon_path: str) -> None:
         """Convert WebDataset to Energon format using native energon prepare command"""
         import subprocess
-        import os
         import glob
         
         # Find actual shard files to determine the correct split-parts range
@@ -158,11 +157,22 @@ class EnergonFormatHandler(BaseFormatHandler):
         logger.info(f"Running command: {' '.join(cmd)}")
 
         # Run energon prepare command (it modifies the webdataset_path in-place)
+        # Check if dataset already exists to determine if we need the first 'y'
+        dataset_info_path = os.path.join(webdataset_path, ".nv-meta", ".info.json")
+        dataset_exists = os.path.exists(dataset_info_path)
+        
+        if dataset_exists:
+            # Dataset exists, need to respond to "continue?" prompt
+            auto_input = "y\ny\n8\ny\ntext\n"  # continue, create yaml, TextSample, simple mapping, text field
+        else:
+            # New dataset, no "continue?" prompt
+            auto_input = "y\n8\ny\ntext\n"  # create yaml, TextSample, simple mapping, text field
+        
         result = subprocess.run(
             cmd,
             capture_output=True,
             text=True,
-            input="y\n8\ny\ntext\n"  # Auto-respond: create dataset.yaml, TextSample, simple field_map, text field
+            input=auto_input
         )
         
         if result.returncode != 0:
