@@ -79,8 +79,19 @@ class WebDatasetFormatHandler(BaseFormatHandler):
                 if 'tokens.json' in sample:
                     tokens = json.loads(sample['tokens.json'].decode('utf-8') if isinstance(sample['tokens.json'], bytes) else sample['tokens.json'])
                 
+                # Extract ID from __key__ if no json metadata available
+                doc_id = metadata.get('id', 'unknown')
+                if doc_id == 'unknown' and '__key__' in sample:
+                    # Extract numeric ID from __key__ format like "doc_00000000"
+                    key = sample['__key__']
+                    if key.startswith('doc_'):
+                        try:
+                            doc_id = int(key[4:])  # Remove "doc_" prefix and convert to int
+                        except ValueError:
+                            doc_id = 0  # Fallback to 0 if conversion fails
+                
                 doc_data = {
-                    'id': metadata.get('id', 'unknown'),
+                    'id': doc_id,
                     'text': text,
                     'tokens': tokens,
                     'length': metadata.get('length', len(text)),
@@ -117,23 +128,13 @@ class WebDatasetFormatHandler(BaseFormatHandler):
                 doc_id = doc_data.get('id', 0)
                 text = doc_data.get('text', '')
                 
-                # Create sample
+                # Create sample (matching standard JSONL to WebDataset format)
                 sample = {
                     "__key__": f"doc_{int(doc_id):08d}",
-                    "text": text.encode('utf-8'),
-                    "json": json.dumps({
-                        'id': doc_id,
-                        'length': len(text),
-                        'token_count': len(text.split()) if self.tokenizer else 0
-                    }).encode('utf-8')
+                    "text": text.encode('utf-8')
                 }
                 
-                # Add tokens if available
-                if self.tokenizer and 'tokens' in doc:
-                    tokens = doc['tokens']
-                    if not tokens:
-                        tokens = self.tokenizer.encode(text)
-                    sample["tokens.json"] = json.dumps(tokens).encode('utf-8')
+                # No tokens field in original format
                 
                 sink.write(sample)
         

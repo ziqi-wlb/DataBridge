@@ -23,7 +23,7 @@ class Document:
             doc_id: Optional document ID
         """
         self.data = data
-        self.doc_id = doc_id or data.get('id', str(hash(str(data))))
+        self.doc_id = doc_id or data.get('id', f"doc_{id(data)}")
     
     def __getitem__(self, key: str) -> Any:
         """Get item by key"""

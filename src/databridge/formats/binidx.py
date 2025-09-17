@@ -36,6 +36,8 @@ class BinIdxFormatHandler(BaseFormatHandler):
     def load(self, path: str) -> Iterator[Document]:
         """Load documents from bin/idx dataset"""
         logger.info(f"Loading bin/idx dataset from {path}")
+        logger.info(f"Tokenizer path: {self.tokenizer_path}")
+        logger.info(f"Tokenizer loaded: {self.tokenizer is not None}")
         
         # Load the indexed dataset
         from megatron.core.datasets.indexed_dataset import IndexedDataset
@@ -50,20 +52,15 @@ class BinIdxFormatHandler(BaseFormatHandler):
             token_ids = dataset.get(doc_idx)
             
             # Convert to text if tokenizer is available
-            text = ""
             if self.tokenizer:
                 text = self.tokenizer.decode(token_ids)
             else:
                 text = f"[TOKENS: {len(token_ids)} tokens]"
             
-            doc_data = {
-                'id': doc_idx,
-                'text': text,
-                'token_count': len(token_ids),
-                'tokens': token_ids.tolist() if hasattr(token_ids, 'tolist') else list(token_ids)
-            }
-            yield Document(doc_data)
-        
+            # Create minimal document data (avoid unnecessary fields for performance)
+            doc_data = {'id': doc_idx, 'text': text}
+            yield Document(doc_data, doc_id=str(doc_idx))
+
         logger.info(f"Finished loading bin/idx dataset from {path}")
     
     def save(self, documents: Iterator[Document], output_path: str, **kwargs) -> None:

@@ -186,14 +186,14 @@ class FormatRegistry:
         logger.info(f"Converting {input_handler.format_name} to {output_handler.format_name}")
         logger.info(f"Input: {input_path}")
         logger.info(f"Output: {output_path}")
-        
+
         # Perform conversion
         # Load documents as Document objects
         documents = input_handler.load(actual_input_path)
-        
+
         # Save documents
         output_handler.save(documents, output_path, **kwargs)
-        
+
         logger.info("Conversion completed successfully")
 
 

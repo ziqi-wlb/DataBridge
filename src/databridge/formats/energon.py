@@ -122,44 +122,60 @@ class EnergonFormatHandler(BaseFormatHandler):
         """Convert WebDataset to Energon format using native energon prepare command"""
         import subprocess
         import os
+        import glob
         
-        # Build energon prepare command (energon prepare works in-place)
+        # Find actual shard files to determine the correct split-parts range
+        shard_files = glob.glob(os.path.join(webdataset_path, "shard_*.tar"))
+        shard_files.sort()
+        
+        if not shard_files:
+            raise RuntimeError(f"No shard files found in {webdataset_path}")
+        
+        # Extract shard numbers to determine the range
+        shard_numbers = []
+        for shard_file in shard_files:
+            basename = os.path.basename(shard_file)
+            # Extract number from shard_XXXXXX.tar
+            shard_num = basename.replace('shard_', '').replace('.tar', '')
+            shard_numbers.append(int(shard_num))
+        
+        min_shard = 0  # Always start from 0
+        max_shard = max(shard_numbers)
+        
+        # Build split-parts pattern using wildcard to match all tar files
+        split_parts = "train:shard_.*.tar"
+        
+        # Build energon prepare command with correct split-parts
         cmd = [
             "energon", "prepare", webdataset_path,
             "--progress",
-            "--split-parts", f"train:train/{{000000-999999}}.tar",
+            "--split-parts", split_parts,
             "--num-workers", "32",
             "--shuffle-tars"
         ]
         
+        logger.info(f"Found {len(shard_files)} shard files (range: {min_shard:06d}-{max_shard:06d})")
         logger.info(f"Running command: {' '.join(cmd)}")
+
+        # Run energon prepare command (it modifies the webdataset_path in-place)
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            input="y\n8\ny\ntext\n"  # Auto-respond: create dataset.yaml, TextSample, simple field_map, text field
+        )
         
-        try:
-            # Run energon prepare command (it modifies the webdataset_path in-place)
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                input="y\n8\ny\ntext\n",  # Auto-respond: continue, TextSample, simple field_map, text field
-                timeout=3600  # 1 hour timeout
-            )
-            
-            if result.returncode != 0:
-                logger.error(f"energon prepare failed with return code {result.returncode}")
-                logger.error(f"stdout: {result.stdout}")
-                logger.error(f"stderr: {result.stderr}")
-                raise RuntimeError(f"energon prepare command failed: {result.stderr}")
-            
-            logger.info("energon prepare completed successfully")
-            logger.info(f"stdout: {result.stdout}")
-            
-        except subprocess.TimeoutExpired:
-            logger.error("energon prepare command timed out")
-            raise RuntimeError("energon prepare command timed out")
-        except FileNotFoundError:
-            logger.error("energon command not found. Please ensure energon is installed and in PATH")
-            raise RuntimeError("energon command not found. Please install energon and ensure it's in PATH")
-    
+        if result.returncode != 0:
+            logger.error(f"energon prepare failed with return code {result.returncode}")
+            logger.error(f"stdout: {result.stdout}")
+            logger.error(f"stderr: {result.stderr}")
+            raise RuntimeError(f"energon prepare command failed: {result.stderr}")
+        
+        logger.info("energon prepare completed successfully")
+        logger.info(f"stdout: {result.stdout}")
+        
+        # energon prepare automatically generates correct split.yaml with wildcard pattern
+        
     def _create_tar_index(self, tar_path: str, idx_path: str) -> None:
         """Create .tar.idx file for a tar file"""
         import tarfile
@@ -215,8 +231,9 @@ part_filter: sample_loader.py:part_filter
             f.write(dataset_yaml)
         
         # Create split.yaml
+        shard_list = [f'"{shard}"' for shard in shard_files]
         split_yaml = f"""split_parts:
-  train: {shard_files}
+  train: [{', '.join(shard_list)}]           
 exclude: []
 """
         
