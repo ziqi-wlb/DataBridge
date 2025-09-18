@@ -11,6 +11,7 @@ from rich.logging import RichHandler
 
 from .formats.registry import registry
 from .comm.dataloader import DataLoaderFactory
+from . import __version__
 
 # Setup rich console
 console = Console()
@@ -23,7 +24,7 @@ logging.basicConfig(
     handlers=[RichHandler(console=console, rich_tracebacks=True)]
 )
 
-logger = logging.getLogger("databridge")
+logger = logging.getLogger("data-bridge")
 
 
 def setup_logging(verbose: bool, quiet: bool):
@@ -37,7 +38,7 @@ def setup_logging(verbose: bool, quiet: bool):
 
 
 @click.group()
-@click.version_option(version="0.1.0")
+@click.version_option(version=__version__)
 @click.option("--verbose", "-v", is_flag=True, help="Enable verbose logging")
 @click.option("--quiet", "-q", is_flag=True, help="Suppress logging output")
 def main(verbose: bool, quiet: bool):
@@ -117,7 +118,7 @@ def list_formats():
 def info():
     """Show DataBridge information"""
     console.print("[bold blue]DataBridge - Dataset Format Conversion Toolkit[/bold blue]")
-    console.print(f"Version: 0.1.0")
+    console.print(f"Version: {__version__}")
     console.print(f"Supported formats:")
     
     formats = registry.list_formats()

@@ -11,6 +11,7 @@ import webdataset as wds
 
 from .base import BaseFormatHandler
 from ..comm.dataset import Document
+from .. import __version__
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +151,7 @@ class WebDatasetFormatHandler(BaseFormatHandler):
             "shard_size": shard_size,
             "format": "webdataset",
             "created_by": "DataBridge",
-            "version": "0.1.0"
+            "version": __version__
         }
         
         with open(info_file, 'w', encoding='utf-8') as f:

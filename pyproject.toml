@@ -3,16 +3,16 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "databridge"
-version = "0.1.0"
+name = "dataloader-bridge"
+dynamic = ["version"]
 description = "A comprehensive dataset conversion toolkit for transforming between different dataset formats"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
-    {name = "Your Name", email = "your.email@example.com"}
+    {name = "ziqi-wlb", email = "550461053@qq.com"}
 ]
 maintainers = [
-    {name = "Your Name", email = "your.email@example.com"}
+    {name = "ziqi-wlb", email = "550461053@qq.com"}
 ]
 keywords = ["dataset", "conversion", "jsonl", "webdataset", "megatron", "energon", "nlp", "machine-learning"]
 classifiers = [
@@ -38,7 +38,7 @@ dependencies = [
     "numpy>=1.21.0",
     "click>=8.0.0",
     "rich>=12.0.0",
-    "megatron-core>=0.4.0",
+    "megatron-core>=0.10.0",
 ]
 
 [project.optional-dependencies]
@@ -56,19 +56,22 @@ test = [
 ]
 
 [project.scripts]
-databridge = "databridge.cli:main"
+databridge = "data_bridge.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/yourusername/DataBridge"
-Documentation = "https://github.com/yourusername/DataBridge#readme"
-Repository = "https://github.com/yourusername/DataBridge"
-"Bug Tracker" = "https://github.com/yourusername/DataBridge/issues"
+Homepage = "https://github.com/ziqi-wlb/DataBridge"
+Documentation = "https://github.com/ziqi-wlb/DataBridge#readme"
+Repository = "https://github.com/ziqi-wlb/DataBridge"
+"Bug Tracker" = "https://github.com/ziqi-wlb/DataBridge/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-dir]
 "" = "src"
+
+[tool.setuptools.dynamic]
+version = {attr = "data_bridge.__version__"}
 
 [tool.black]
 line-length = 88
@@ -116,7 +119,7 @@ python_functions = ["test_*"]
 addopts = [
     "--strict-markers",
     "--strict-config",
-    "--cov=src/databridge",
+    "--cov=src/data_bridge",
     "--cov-report=term-missing",
     "--cov-report=html",
 ]

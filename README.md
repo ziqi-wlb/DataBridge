@@ -23,6 +23,12 @@ DataBridge is a comprehensive dataset conversion toolkit that supports seamless 
 
 ## 📦 Installation
 
+### From PyPI
+
+```bash
+pip install dataloader-bridge
+```
+
 ### From Source
 
 ```bash
@@ -117,7 +123,7 @@ databridge convert \
 #### Using the Registry
 
 ```python
-from databridge.formats.registry import registry
+from data_bridge.formats.registry import registry
 
 # Convert bin/idx to Energon format
 registry.convert(
@@ -145,7 +151,7 @@ print(f"Supported formats: {formats}")
 #### Using Individual Format Handlers
 
 ```python
-from databridge import Document, JsonlFormatHandler, WebDatasetFormatHandler, BinIdxFormatHandler, EnergonFormatHandler
+from data_bridge import Document, JsonlFormatHandler, WebDatasetFormatHandler, BinIdxFormatHandler, EnergonFormatHandler
 
 # Load data using specific handlers
 jsonl_handler = JsonlFormatHandler()
@@ -241,7 +247,7 @@ DataBridge also supports runtime dataset loading for training frameworks:
 ### PyTorch Integration
 
 ```python
-from databridge import create_pytorch_loader
+from data_bridge import create_pytorch_loader
 
 # Create PyTorch data loader
 loader = create_pytorch_loader(
@@ -261,7 +267,7 @@ for batch in loader:
 ### HuggingFace Integration
 
 ```python
-from databridge import create_huggingface_loader
+from data_bridge import create_huggingface_loader
 
 # Create HuggingFace loader
 loader = create_huggingface_loader(dataset_path="data.jsonl")
@@ -279,7 +285,7 @@ for doc in loader:
 ### Megatron Integration
 
 ```python
-from databridge import create_megatron_loader
+from data_bridge import create_megatron_loader
 
 # Create Megatron loader with tokenizer
 loader = create_megatron_loader(

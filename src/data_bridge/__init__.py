@@ -2,9 +2,9 @@
 DataBridge - A comprehensive dataset conversion toolkit
 """
 
-__version__ = "0.1.0"
-__author__ = "ZiqiYu"
-__email__ = "550461236@qq.com"
+__version__ = "0.1.1"
+__author__ = "ziqi-wlb"
+__email__ = "550461053@qq.com"
 
 from .comm.dataset import Dataset, Document, DatasetCollection
 from .comm.dataloader import (

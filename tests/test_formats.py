@@ -8,7 +8,7 @@ import os
 import json
 from unittest.mock import Mock, patch
 
-from databridge.formats import (
+from data_bridge.formats import (
     FormatRegistry,
     BaseFormatHandler,
     JsonlFormatHandler,

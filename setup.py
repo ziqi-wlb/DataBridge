@@ -3,17 +3,29 @@
 Setup script for DataBridge
 """
 
+import os
+import re
 from setuptools import setup, find_packages
 
 # Read README for long description
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
+# Read version from __init__.py
+def get_version():
+    init_file = os.path.join("src", "data_bridge", "__init__.py")
+    with open(init_file, "r", encoding="utf-8") as f:
+        content = f.read()
+    version_match = re.search(r'^__version__ = ["\']([^"\']*)["\']', content, re.MULTILINE)
+    if version_match:
+        return version_match.group(1)
+    raise RuntimeError("Unable to find version string.")
+
 setup(
-    name="databridge",
-    version="0.1.0",
-    author="ZiqiYu",
-    author_email="550461236@qq.com",
+    name="dataloader-bridge",
+    version=get_version(),
+    author="ziqi-wlb",
+    author_email="550461053@qq.com",
     description="A comprehensive dataset conversion toolkit for transforming between different dataset formats",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -43,12 +55,13 @@ setup(
     install_requires=[
         "webdataset>=0.2.0",
         "transformers>=4.20.0",
-        "torch>=1.12.0",
+        "torch>=2.4.0",
         "tqdm>=4.64.0",
         "numpy>=1.21.0",
         "click>=8.0.0",
         "rich>=12.0.0",
-        "megatron-core>=0.4.0",
+        "megatron-core>=0.10.0",
+        "megatron-energon",
     ],
     extras_require={
         "dev": [
@@ -66,7 +79,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "databridge=databridge.cli:main",
+            "databridge=data_bridge.cli:main",
         ],
     },
     include_package_data=True,
